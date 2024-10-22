@@ -1,0 +1,31 @@
+.quiz-card-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.quiz-card-title {
+  margin: 0;
+  color: black;
+}
+
+.quiz-card-description {
+  margin: 0;
+  color: black;
+}
+
+.rs-panel-title {
+  font-size: 1.5em;
+  font-weight: 500;
+}
+
+.rs-panel-bordered {
+  border-width: 2px;
+}
+
+p {
+  margin: 8px;
+}

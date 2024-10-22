@@ -1,0 +1,9 @@
+  /* Color palette */
+  :root {
+    --background-color: #1e1e1e; /* Dark background */
+    --primary-color: #ffc35c; /* Yellow */
+    --secondary-color: #c2f9ff; /* Pink */
+    --accent-color: #ff8b48; /* Orange */
+    --text-color: #ddceac; /* Creamy white text */
+    --text-color-dark: #1e1e1e; /* Dark text */
+  }

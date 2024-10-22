@@ -1,0 +1,17 @@
+.home-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.card-row {
+  display: flex;
+  justify-content: center;
+  gap: 2em;
+  flex-wrap: wrap;
+}
+
+.card-col {
+  display: flex;
+  justify-content: center;
+  flex: 1 1 25%;
+}
