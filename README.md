@@ -4,16 +4,6 @@
 ## Overview
 Quiz Masters is a real-time multiplayer quiz game platform where players can compete in themed quiz rooms. This project utilizes a distributed database architecture with MongoDB to ensure scalability, high availability, and performance optimization.
 
-## Table of Contents
-- [Features](#features)
-- [Technologies](#technologies)
-- [Project Structure](#project-structure)
-- [Database Structure](#database-structure)
-- [Setup Instructions](#setup-instructions)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-
 ## Roadmap
 ### Phase 1: User creation & single player
 - Implement single-player mode.
