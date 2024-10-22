@@ -1,13 +1,11 @@
-/* @import 'variables.css'; */
-
 .sticky-navbar {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 1000;
-  background-color: var(--secondary-color) !important;
-  color: var(--text-color-dark) !important;
+  background-color: var(--background-color-dark) !important;
+  color: var(--accent-color) !important;
   font-size: 1.5em;
   display: flex;
   align-items: center;
@@ -33,6 +31,11 @@
   position: absolute;
   top: -5px;
   left: -5px;
+  font-weight: bold;
+  background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .avatar {

@@ -15,7 +15,7 @@ Quiz Masters is a real-time multiplayer quiz game platform where players can com
 - [License](#license)
 
 ## Roadmap
-### Phase 1: MVP Development
+### Phase 1: User creation & single player
 - Implement single-player mode.
 - Develop basic game logic and API endpoints.
 - Set up MongoDB databases and collections.
@@ -26,24 +26,23 @@ Quiz Masters is a real-time multiplayer quiz game platform where players can com
 - Implement ranking system and leaderboards.
 
 ### Phase 3: User Experience Enhancements
-- Design and develop an intuitive user interface with React.
-- Add responsiveness and accessibility features.
-- Introduce player profiles and customization options.
+- Design and develop an intuitive user interface.
+- Improve responsiviness.
+- Introduce player profiles, achievements and customization options.
 
-### Phase 4: Testing and Deployment
-- Conduct thorough testing (unit, integration, and end-to-end).
+### Phase 4: Testing and Deployment to cloud
+- Conduct thorough testing.
 - Optimize performance and scalability.
 - Deploy the application on a cloud platform.
 
 ## Technologies
 - **Frontend**: React, Vite
-- **Backend**: Deno, Oak
+- **Backend**: Deno, Oak, Socket.IO?
 - **Database**: MongoDB
-- **Real-Time Communication**: Socket.IO
 
 ## Developer Guide
 
-Welcome to the project! This guide will help you get started and understand the key components of our codebase.
+Welcome to the project! This guide will help you get started and understand the key components of the codebase.
 
 ### Project Overview
 
@@ -51,11 +50,17 @@ The project is divided into two main parts: **backend** and **frontend**. Each p
 
 ### Key Tools and Technologies
 
-- **Deno**: A secure runtime for JavaScript and TypeScript. The backend is built using Deno, which allows for modern features and better security. You'll find configuration files like `deno.json` and `deno.lock` in the `backend` directory.
+- **Deno**: A secure and modern runtime to replace Node.js.
+
+Useful commands:
+   ```bash
+   deno run dev
+   deno i npm:<package-name>
+   ```
 
 [Deno Documentation](https://deno.land/manual)
 
-- **ESLint**: A tool for identifying and fixing problems in your JavaScript code. The `.eslintrc.js` file contains the rules and configurations for linting. Make sure to run ESLint regularly to maintain code quality.
+- **ESLint**: A tool for identifying and fixing problems in the JavaScript code. The `.eslintrc.js` file contains the rules and configurations for linting.
 
 [ESLint Documentation](https://eslint.org/docs/user-guide/getting-started)
 
@@ -67,9 +72,10 @@ The project is divided into two main parts: **backend** and **frontend**. Each p
 
 [RSuite Documentation](https://rsuitejs.com/)
 
-- [Project Structure Documentation](https://blog.webdevsimplified.com/2022-07/react-folder-structure/)
-
 ### Getting Started
+
+Install Deno if you don't have it:
+[irm https://deno.land/install.ps1 | iex](https://docs.deno.com/runtime/getting_started/installation/)
 
 1. **Clone the Repository**:
    ```bash
@@ -78,23 +84,24 @@ The project is divided into two main parts: **backend** and **frontend**. Each p
    ```
 
 2. **Set Up Environment Variables**:
-   Copy the `.env.example` to `.env` and fill in your environment-specific variables.
+   (No enviroment variables exist yet so skip this)
 
 3. **Install Dependencies**:
-   - For the backend (Deno):
+   - For backend and frontend:
      ```bash
-     deno run --allow-net --allow-read main.js
+     cd backend
+     deno i
      ```
    - For the frontend (npm):
      ```bash
      cd frontend
-     npm install
+     deno i
      ```
 
 4. **Run the Development Server**:
    - Backend:
      ```bash
-     deno run --allow-net main.js
+     deno...
      ```
    - Frontend:
      ```bash
@@ -104,48 +111,16 @@ The project is divided into two main parts: **backend** and **frontend**. Each p
 ### Directory Structure
 
 - **backend/**: Contains all server-side logic, including routes, models, and configuration.
+
 - **frontend/**: Contains all client-side code, including components, pages, and styles.
+index.html and main.jsx act as entry point to the application. main.jsx is also responsible for selecting which page to display.
+Assets folder is used for images.
+Each component has it's own folder for organization. Index files combine the other components inside the folder, which is then imported to one or more pages.
+Each page has it's own folder and they are built using sections (components). The current page is determined in the main.jsx.
+Data folder contains static files that are used to render specific components for example.
 
 ## Database Structure
 WIP
-
-## Setup Instructions
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd quiz-masters
-   ```
-
-2. Install dependencies:
-   - For the frontend:
-     ```bash
-     cd frontend
-     npm install
-     ```
-
-   - For the backend:
-     ```bash
-     cd backend
-     deno task setup
-     ```
-
-3. Create a `.env` file in the root directory and configure your environment variables:
-   ```env
-   MONGODB_URI=<your-mongodb-uri>
-   PORT=<your-desired-port>
-   ```
-
-4. Start the development servers:
-   - For the frontend:
-     ```bash
-     cd frontend
-     npm run dev
-     ```
-   - For the backend:
-     ```bash
-     cd backend
-     deno task dev
-     ```
 
 ## License
 This project is licensed under the [MIT License](LICENSE).

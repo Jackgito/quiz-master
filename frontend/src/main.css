@@ -44,6 +44,28 @@ button {
   cursor: pointer;
 }
 
+.rs-modal-content {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.rs-icon {
+  fill: var(--accent-color);
+}
+
+/* Selectors */
+.rs-radio-label {
+  color: var(--text-color);
+}
+
+.rs-radio-checked :is(*) {
+  color: var(--accent-color) !important;
+}
+
+.rs-btn-primary {
+  background-color: var(--accent-color);
+  color: var(--text-color-dark);
+}
 /* button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;

@@ -1,0 +1,45 @@
+/* Cards */
+.rs-panel-title, .rs-modal-title {
+  font-size: 1.5rem !important;
+  font-weight: 500;
+  color: var(--text-color) !important;
+}
+
+.rs-panel-bordered {
+  border-width: 2px !important;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.rs-panel-bordered:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 10px var(--accent-color);
+}
+
+.card-row {
+  display: flex;
+  justify-content: center;
+  gap: 2em;
+  flex-wrap: wrap;
+}
+
+.card-col {
+  display: flex;
+  justify-content: center;
+  flex: 1 1 25%;
+}
+
+/* Modal */
+.rs-modal-content, .rs-radio-label, .rs-btn {
+  font-size: 0.9rem !important;
+}
+
+.selector-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  gap: 16px;
+}
+
+p {
+  margin-bottom: 16px !important;
+}

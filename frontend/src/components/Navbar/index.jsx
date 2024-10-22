@@ -1,6 +1,6 @@
 import React from 'react';
-import { Navbar as RsNavbar, Nav, Dropdown, Avatar } from 'rsuite';
-import './Navbar.css';
+import { Navbar as RsNavbar, Nav, Avatar } from 'rsuite';
+import './index.css';
 
 const Navbar = ({ active, onSelect, ...props }) => (
   <RsNavbar className="sticky-navbar" {...props}>
@@ -9,11 +9,8 @@ const Navbar = ({ active, onSelect, ...props }) => (
     <div className="nav-center">
       <Nav onSelect={onSelect} activeKey={active} className="nav">
         <Nav.Item href="/">Home</Nav.Item>
-        <Nav.Item href="/about">About</Nav.Item>
-        <Dropdown title="More">
-          <Dropdown.Item href="/settings">Settings</Dropdown.Item>
-          <Dropdown.Item href="/profile">Profile</Dropdown.Item>
-        </Dropdown>
+        <Nav.Item href="/leaderboard">Leaderboard</Nav.Item>
+        <Nav.Item href="/signIn">Sign in</Nav.Item>
       </Nav>
     </div>
 
