@@ -95,7 +95,7 @@ Install Deno if you don't have it:
      ```
    - Frontend:
      ```bash
-     npm run dev
+     deno run dev
      ```
 
 ### Directory Structure
