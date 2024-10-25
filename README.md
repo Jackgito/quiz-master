@@ -4,6 +4,11 @@
 ## Overview
 Quiz Masters is a real-time multiplayer quiz game platform where players can compete in themed quiz rooms. This project utilizes a distributed database architecture with MongoDB to ensure scalability, high availability, and performance optimization.
 
+## Technologies
+- **Frontend**: React, Vite
+- **Backend**: Deno, Oak, Socket.IO?
+- **Database**: MongoDB
+
 ## Roadmap
 ### Phase 1: User creation & single player
 - Implement single-player mode.
@@ -24,11 +29,6 @@ Quiz Masters is a real-time multiplayer quiz game platform where players can com
 - Conduct thorough testing.
 - Optimize performance and scalability.
 - Deploy the application on a cloud platform.
-
-## Technologies
-- **Frontend**: React, Vite
-- **Backend**: Deno, Oak, Socket.IO?
-- **Database**: MongoDB
 
 ## Developer Guide
 

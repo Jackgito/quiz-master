@@ -16,7 +16,7 @@ const imageMap = {
 
 const QuizSelectionSection = () => (
   <>
-    <div className="home-container">
+    <div className="quiz-section">
       <Row className="card-row">
         {quizCategories.map(category => (
           <Col key={category.id} md={6} sm={12} className="card-col">

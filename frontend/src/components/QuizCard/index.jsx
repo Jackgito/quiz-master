@@ -6,10 +6,10 @@ import './index.css';
 const QuizCard = ({ title, description, image }) => {
   const [open, setOpen] = useState(false);
   const [difficulty, setDifficulty] = useState('normal');
+  const [gameMode, setGameMode] = useState('multiplayer');
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const handleDifficultyChange = (value) => setDifficulty(value);
 
   return (
     <>
@@ -23,7 +23,9 @@ const QuizCard = ({ title, description, image }) => {
         title={title}
         description={description}
         difficulty={difficulty}
-        onDifficultyChange={handleDifficultyChange}
+        onDifficultyChange={setDifficulty}
+        gameMode={gameMode}
+        onGameModeChange={setGameMode}
       />
     </>
   );
