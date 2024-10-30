@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 
-const useFetchQuestions = (theme, difficulty, gamemode) => {
+// This custom hook acts like a function which returns an object with three properties: questions, loading, and error.
+// Returned questions are chosen based on the theme and difficulty level selected by the user.
+const useFetchQuestions = (theme, difficulty) => {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -8,10 +10,11 @@ const useFetchQuestions = (theme, difficulty, gamemode) => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/questions?theme=${theme}&difficulty=${difficulty}&gamemode=${gamemode}`);
+        const response = await fetch(`http://localhost:8000/api/questions?theme=${theme}&difficulty=${difficulty}`);
         const data = await response.json();
         setQuestions(data);
       } catch (err) {
+        console.error(err);
         setError(err);
       } finally {
         setLoading(false);
@@ -19,7 +22,7 @@ const useFetchQuestions = (theme, difficulty, gamemode) => {
     };
 
     fetchQuestions();
-  }, [theme, difficulty, gamemode]);
+  }, [theme, difficulty]);
 
   return { questions, loading, error };
 };

@@ -74,7 +74,7 @@ Install Deno if you don't have it:
    ```
 
 2. **Set Up Environment Variables**:
-   (No enviroment variables exist yet so skip this)
+   You can get the ENV's from the repository owner
 
 3. **Install Dependencies**:
    - For backend and frontend:
@@ -100,7 +100,7 @@ Install Deno if you don't have it:
 
 ### Directory Structure
 
-- **backend/**: Contains all server-side logic, including routes, models, and configuration.
+- **backend/**: Contains all server-side logic. Models folder contains the schemas used for accessing MongoDB, routes handle HTTP requests from the client to do CRUD operations. Scripts folder contains a script to generate data to the database.
 
 - **frontend/**: Contains all client-side code, including components, pages, and styles.
 index.html and main.jsx act as entry point to the application. main.jsx is also responsible for selecting which page to display.
@@ -110,7 +110,11 @@ Each page has it's own folder and they are built using sections (components). Th
 Data folder contains static files that are used to render specific components for example.
 
 ## Database Structure
-WIP
+Cluster: QuizMaster
+Databases: 
+- Users: Users & Leaderboards collections
+- Questions: Questions collection
+- Achievements: Achievements collection
 
 ## License
 This project is licensed under the [MIT License](LICENSE).

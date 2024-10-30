@@ -1,45 +1,81 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
+import './index.css';
 
-const AnimatedTimerBar = ({
-  time,
-  height = '32px',
-  backgroundColor = 'bg-gray-200',
-  foregroundColor = 'bg-blue-500'
-}) => {
-  const [remainingTime, setRemainingTime] = useState(time)
+export default function QuestionTimer({
+  initialTime = 5,
+  size = 200,
+  strokeWidth = 10,
+  onTimeUp
+}) {
+  const [timeLeft, setTimeLeft] = useState(initialTime);
+
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const strokeDashoffset = circumference - (timeLeft / initialTime) * circumference;
 
   useEffect(() => {
-    if (remainingTime <= 0) return
-
-    const timer = setInterval(() => {
-      setRemainingTime((prevTime) => {
-        if (prevTime <= 0) {
-          clearInterval(timer)
-          return 0
+    const interval = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime > 0) {
+          return prevTime - 1;
         }
-        return prevTime - 0.1
-      })
-    }, 100)
+        clearInterval(interval);
+        if (onTimeUp) onTimeUp();  // Call onTimeUp when timer reaches 0
+        return 0;
+      });
+    }, 1000);
 
-    return () => clearInterval(timer)
-  }, [remainingTime])
+    return () => clearInterval(interval);
+  }, [onTimeUp]);
 
-  const progress = (remainingTime / time) * 100
+  const getColor = (progress) => {
+    if (progress >= 1) {
+      return '#ff0000'; // Red when timer reaches 0
+    } else if (progress < 0.5) {
+      const r = Math.round(34 + (221 - 34) * (progress * 2));
+      const g = Math.round(197 + (214 - 197) * (progress * 2));
+      return `rgb(${r}, ${g}, 0)`;
+    } else {
+      const r = 221;
+      const g = Math.round(214 - 214 * ((progress - 0.5) * 2));
+      return `rgb(${r}, ${g}, 0)`;
+    }
+  };
+
+  const progress = 1 - timeLeft / initialTime;
+  const currentColor = getColor(progress);
 
   return (
-    <div
-      className={`w-full ${height} ${backgroundColor} rounded-full overflow-hidden`}
-      role="progressbar"
-      aria-valuenow={progress}
-      aria-valuemin={0}
-      aria-valuemax={100}
-    >
-      <div
-        className={`h-full ${foregroundColor} transition-all duration-100 ease-linear`}
-        style={{ width: `${progress}%` }}
-      />
+    <div className="card">
+      <div className="card-content">
+        <div className="timer-container">
+          <svg width={size} height={size} className="rotate-90">
+            <circle
+              cx={size / 2}
+              cy={size / 2}
+              r={radius}
+              fill="none"
+              stroke="#e5e7eb"
+              strokeWidth={strokeWidth}
+            />
+            <circle
+              cx={size / 2}
+              cy={size / 2}
+              r={radius}
+              fill="none"
+              stroke={currentColor}
+              strokeWidth={strokeWidth}
+              strokeDasharray={circumference}
+              strokeDashoffset={strokeDashoffset}
+              strokeLinecap="round"
+              className="animated-stroke"
+            />
+          </svg>
+          <div className="time-left-display">
+            <span className="time-left-text">{timeLeft}</span>
+          </div>
+        </div>
+      </div>
     </div>
-  )
+  );
 }
-
-export default AnimatedTimerBar
