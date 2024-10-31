@@ -2,7 +2,7 @@ import { Router } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 
 const router = new Router();
 
-export default (questionsCollection) => {
+export default (questionsDb) => {
   router.get("/api/questions", async (context) => {
     const theme = context.request.url.searchParams.get("theme");
     const difficulty = context.request.url.searchParams.get("difficulty");
@@ -14,6 +14,8 @@ export default (questionsCollection) => {
     }
 
     try {
+      // Select collection based on theme
+      const questionsCollection = questionsDb.collection(theme);
       const questions = await questionsCollection.find({ theme, difficulty }).toArray();
       context.response.body = questions;
     } catch (error) {

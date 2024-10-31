@@ -43,11 +43,6 @@ const usersDb = client.db(MONGO_DB_NAME_USERS);
 const questionsDb = client.db(MONGO_DB_NAME_QUESTIONS);
 const achievementsDb = client.db(MONGO_DB_NAME_ACHIEVEMENTS);
 
-// Set up collections for each type of data
-const usersCollection = usersDb.collection("Users");
-const questionsCollection = questionsDb.collection("Questions");
-const achievementsCollection = achievementsDb.collection("Achievements");
-
 // Initialize Oak application
 const app = new Application();
 
@@ -55,19 +50,16 @@ const app = new Application();
 app.use(oakCors({ origin: "http://localhost:5173" })); // Allow requests from your frontend
 
 // Use player routes, with separate methods for allowed methods
-app.use(createPlayerRoutes(usersCollection).routes());
-app.use(createPlayerRoutes(usersCollection).allowedMethods());
+app.use(createPlayerRoutes(usersDb).routes());
+app.use(createPlayerRoutes(usersDb).allowedMethods());
 
 // Achievement and question routes with respective collections
-app.use(createAchievementRoutes(achievementsCollection).routes());
-app.use(createAchievementRoutes(achievementsCollection).allowedMethods());
+app.use(createAchievementRoutes(achievementsDb).routes());
+app.use(createAchievementRoutes(achievementsDb).allowedMethods());
 
-app.use(createQuestionRoutes(questionsCollection).routes());
-app.use(createQuestionRoutes(questionsCollection).allowedMethods());
+app.use(createQuestionRoutes(questionsDb).routes());
+app.use(createQuestionRoutes(questionsDb).allowedMethods());
 
 // Start server on port 8000
 console.log("Server is running on port 8000");
 await app.listen({ port: 8000 });
-
-// Export client and collections for potential use elsewhere in the app
-export { client, questionsCollection };

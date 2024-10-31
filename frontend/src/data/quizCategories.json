@@ -2,19 +2,37 @@
   {
     "id": 1,
     "title": "Random",
-    "description": "A mix of random trivia questions.",
+    "description": "Dive into a captivating assortment of trivia questions that span a variety of topics. Perfect for testing your knowledge and having fun, this category will surprise you with unexpected facts and challenges!",
     "image": "randomIcon.png"
   },
   {
     "id": 2,
     "title": "Science",
-    "description": "Test your knowledge in various science topics.",
+    "description": "Put your scientific knowledge to the test across diverse fields such as biology, chemistry, physics, and more. Engage with thought-provoking questions that will challenge your understanding of the natural world!",
     "image": "scienceIcon.png"
   },
   {
     "id": 3,
     "title": "Music",
-    "description": "Challenge your music knowledge.",
+    "description": "Challenge your musical expertise with questions that cover genres, artists, lyrics, and history. Whether you're a casual listener or a devoted fan, this category will tune your brain to new rhythms!",
     "image": "musicIcon.png"
+  },
+  {
+    "id": 4,
+    "title": "Gaming",
+    "description": "Test your gaming knowledge with questions that span classic titles to the latest releases. From game mechanics to character lore, prove you're a true gamer by tackling these fun and challenging trivia questions!",
+    "image": "gamingIcon.jpg"
+  },
+  {
+    "id": 5,
+    "title": "Geography",
+    "description": "Explore the world with questions that challenge your knowledge of countries, capitals, landmarks, and geographical features. Expand your horizons and see how well you know our planet!",
+    "image": "geographyIcon.jpg"
+  },
+  {
+    "id": 6,
+    "title": "Sports",
+    "description": "Put your sports knowledge to the ultimate test! From famous athletes and iconic moments to rules and statistics across various sports, see how well you can score in this thrilling category!",
+    "image": "sportsIcon.jpg"
   }
 ]
