@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useQuizSettings } from '../../context/quizSettingsContext';
-import QuestionCard from "../../components/QuestionCard";
+import QuestionCard from "./QuestionCard/questionCard.jsx";
+import QuestionTimer from "./QuestionTimer/questionTimer.jsx";
 import useFetchQuestions from "../../hooks/useFetchQuestions";
-import QuestionTimer from "../../components/QuestionTimer";
 import './index.css';
 
 const Quiz = () => {
@@ -12,16 +12,13 @@ const Quiz = () => {
   const { questions, loading, error } = useFetchQuestions(theme, difficulty, gamemode);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState(null);
-  const [isAnswered, setIsAnswered] = useState(false);
   const [key, setKey] = useState(0);  // Key for resetting timer
 
   // Move to the next question and reset the answer state
-  console.log(questions)
   const handleNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-      setIsAnswered(false);
       setUserAnswer(null);
+      setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
       setKey(prevKey => prevKey + 1);
     } else {
       // Quiz completed
@@ -33,19 +30,18 @@ const Quiz = () => {
   // Handle answer selection
   const handleAnswer = (answer) => {
     setUserAnswer(answer);
-    setIsAnswered(true);
   };
 
   // Automatically move to the next question if answered, with a delay
   useEffect(() => {
-    if (isAnswered) {
+    if (userAnswer !== null) {
       const timer = setTimeout(() => {
         handleNextQuestion();
       }, 3000);
 
       return () => clearTimeout(timer);
     }
-  }, [isAnswered]);
+  }, [userAnswer]);
 
   // Loading and error handling
   if (loading) return <div>Generating questions...</div>;
@@ -57,14 +53,13 @@ const Quiz = () => {
 
   return (
     <div className="quiz-container">
-      <h2>{questionInfo.question}</h2>
       <QuestionTimer key={key} onTimeUp={handleNextQuestion} />
-      {/* <QuestionCard 
-        question={questionInfo} 
+      <QuestionCard
+        question={questionInfo.question}
+        choices={questionInfo.choices}
         onAnswer={handleAnswer} 
-        disabled={isAnswered}  // Disable answering when time's up or already answered
-      /> */}
-      {isAnswered && <div>Next question in 3 seconds...</div>}
+        isDisabled={userAnswer !== null}  // Disable answering when time's up or already answered
+      />
     </div>
   );
 };

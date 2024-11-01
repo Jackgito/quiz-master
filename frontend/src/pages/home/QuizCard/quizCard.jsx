@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Panel } from 'rsuite';
 import QuizModal from './quizModal';
-import './index.css';
+import './quizCard.css';
 
 const QuizCard = ({ title, description, image }) => {
   const [open, setOpen] = useState(false);

@@ -2,7 +2,7 @@ import { Modal, Button } from 'rsuite';
 import { useNavigate } from 'react-router-dom';
 import DifficultySelector from './difficultySelector';
 import GameModeSelector from './gameModeSelector';
-import { useQuizSettings } from '../../context/quizSettingsContext';
+import { useQuizSettings } from '../../../context/quizSettingsContext';
 
 const QuizModal = ({ open, onClose, title, description, difficulty, onDifficultyChange, gameMode, onGameModeChange }) => {
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ const QuizModal = ({ open, onClose, title, description, difficulty, onDifficulty
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={onClose} size="md">
       <Modal.Header>
         <Modal.Title>{title}</Modal.Title>
       </Modal.Header>

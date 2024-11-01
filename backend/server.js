@@ -7,6 +7,7 @@ import "https://deno.land/x/dotenv/load.ts";
 import createAchievementRoutes from "./routes/achievementRoutes.js";
 import createPlayerRoutes from "./routes/playerRoutes.js";
 import createQuestionRoutes from "./routes/questionRoutes.js";
+import createLeaderboardRoutes from "./routes/leaderboardRoutes.js";
 
 // Import CORS middleware
 import { oakCors } from "https://deno.land/x/cors/mod.ts";
@@ -20,9 +21,10 @@ if (!MONGO_URI) {
   Deno.exit(1);
 }
 
-const MONGO_DB_NAME_USERS = Deno.env.get("MONGO_DB_NAME_USERS") || "users";
-const MONGO_DB_NAME_QUESTIONS = Deno.env.get("MONGO_DB_NAME_QUESTIONS") || "questions";
-const MONGO_DB_NAME_ACHIEVEMENTS = Deno.env.get("MONGO_DB_NAME_ACHIEVEMENTS") || "achievements";
+const MONGO_DB_NAME_USERS = Deno.env.get("MONGO_DB_NAME_USERS");
+const MONGO_DB_NAME_QUESTIONS = Deno.env.get("MONGO_DB_NAME_QUESTIONS");
+const MONGO_DB_NAME_ACHIEVEMENTS = Deno.env.get("MONGO_DB_NAME_ACHIEVEMENTS");
+const MONGO_DB_NAME_LEADERBOARDS = Deno.env.get("MONGO_DB_NAME_LEADERBOARDS");
 
 // Initialize MongoDB client with URI
 const client = new MongoClient(MONGO_URI);
@@ -42,6 +44,7 @@ try {
 const usersDb = client.db(MONGO_DB_NAME_USERS);
 const questionsDb = client.db(MONGO_DB_NAME_QUESTIONS);
 const achievementsDb = client.db(MONGO_DB_NAME_ACHIEVEMENTS);
+const leaderboardDb = client.db(MONGO_DB_NAME_LEADERBOARDS);
 
 // Initialize Oak application
 const app = new Application();
@@ -59,6 +62,9 @@ app.use(createAchievementRoutes(achievementsDb).allowedMethods());
 
 app.use(createQuestionRoutes(questionsDb).routes());
 app.use(createQuestionRoutes(questionsDb).allowedMethods());
+
+app.use(createLeaderboardRoutes(leaderboardDb).routes());
+app.use(createLeaderboardRoutes(leaderboardDb).allowedMethods());
 
 // Start server on port 8000
 console.log("Server is running on port 8000");

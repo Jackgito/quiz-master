@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './index.css';
+import './questionTimer.css';
 
 export default function QuestionTimer({
   initialTime = 5,

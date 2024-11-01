@@ -1,4 +1,4 @@
-import Card from '../../components/QuizCard';
+import Card from './QuizCard/quizCard.jsx';
 import quizCategories from '../../data/quizCategories.json'; // Import the JSON data
 
 // Import images directly

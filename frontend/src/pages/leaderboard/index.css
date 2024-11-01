@@ -1,0 +1,12 @@
+.leaderboards-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+  width: 100%;
+  color: #ffffff;
+  text-align: center;
+  padding-top: 250px;
+  padding-bottom: 150px;
+}
