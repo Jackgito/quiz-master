@@ -1,0 +1,14 @@
+.rs-modal-content, .rs-radio-label, .rs-btn {
+  font-size: 0.9rem !important;
+}
+
+.selector-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  gap: 16px;
+}
+
+p {
+  margin-bottom: 16px !important;
+}

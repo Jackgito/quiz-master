@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import './questionTimer.css';
 
 export default function QuestionTimer({
-  initialTime = 5,
+  initialTime = 10,
   size = 200,
   strokeWidth = 10,
-  onTimeUp
+  onTimeUp,
+  onTimeChange
 }) {
   const [timeLeft, setTimeLeft] = useState(initialTime);
 
@@ -17,7 +18,9 @@ export default function QuestionTimer({
     const interval = setInterval(() => {
       setTimeLeft((prevTime) => {
         if (prevTime > 0) {
-          return prevTime - 1;
+          const newTime = prevTime - 1;
+          if (onTimeChange) onTimeChange(newTime); // Call onTimeChange with new time
+          return newTime;
         }
         clearInterval(interval);
         if (onTimeUp) onTimeUp();  // Call onTimeUp when timer reaches 0
@@ -26,7 +29,7 @@ export default function QuestionTimer({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [onTimeUp]);
+  }, [onTimeUp, onTimeChange]);
 
   const getColor = (progress) => {
     if (progress >= 1) {

@@ -20,8 +20,7 @@ const QuestionCard = ({ question, choices, onAnswer, isDisabled }) => {
     const handleAnswerClick = (choice) => {
         if (!isDisabled) {
             setSelectedAnswer(choice.answer);  // Track the selected answer
-            onAnswer(choice.answer);  // Pass the selected answer to the parent component
-            console.log(`Selected answer: ${choice.answer}, Correct: ${choice.correctAnswer}`);
+            onAnswer(choice);  // Pass the selected answer to the parent component (object that contains answer string and correctAnswer boolean)
         }
     };
 

@@ -48,16 +48,11 @@ Welcome to the project! This guide will help you get started and understand the 
 2. **Set Up Environment Variables**:
    You can get the environment variables from the repository owner.
 
-3. **Install Dependencies**:
-   - For backend:
-     ```bash
-     cd backend
-     deno i
-     ```
+3. **Install Frontend Dependencies**:
    - For frontend:
      ```bash
      cd frontend
-     deno i
+     deno i --allow-scripts
      ```
 
 4. **Run the Application**:

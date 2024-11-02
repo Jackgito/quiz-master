@@ -29,8 +29,6 @@ const MONGO_DB_NAME_LEADERBOARDS = Deno.env.get("MONGO_DB_NAME_LEADERBOARDS");
 // Initialize MongoDB client with URI
 const client = new MongoClient(MONGO_URI);
 
-console.log(MONGO_URI);
-
 // Attempt to connect to MongoDB and handle any connection errors
 try {
   await client.connect();
@@ -63,8 +61,8 @@ app.use(createAchievementRoutes(achievementsDb).allowedMethods());
 app.use(createQuestionRoutes(questionsDb).routes());
 app.use(createQuestionRoutes(questionsDb).allowedMethods());
 
-app.use(createLeaderboardRoutes(leaderboardDb).routes());
-app.use(createLeaderboardRoutes(leaderboardDb).allowedMethods());
+app.use(createLeaderboardRoutes(leaderboardDb, usersDb).routes());
+app.use(createLeaderboardRoutes(leaderboardDb, usersDb).allowedMethods());
 
 // Start server on port 8000
 console.log("Server is running on port 8000");

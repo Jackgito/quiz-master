@@ -10,7 +10,7 @@ const useFetchQuestions = (theme, difficulty) => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/questions?theme=${theme}&difficulty=${difficulty}`);
+        const response = await fetch(`http://localhost:8000/api/questions?theme=${theme}&difficulty=${difficulty}&limit=1`);
         const data = await response.json();
         setQuestions(data);
       } catch (err) {

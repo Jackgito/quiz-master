@@ -1,5 +1,3 @@
-// schemas/questionSchema.js
-
 export const questionSchema = {
   _id: { type: "ObjectId", required: true }, // MongoDB ObjectId
   questionText: { type: "string", required: true }, // Text of the question

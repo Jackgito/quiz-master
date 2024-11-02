@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { Panel } from 'rsuite';
-import QuizModal from './quizModal';
+import QuizModal from '../../../components/QuizModal/quizModal.jsx';
 import './quizCard.css';
 
 const QuizCard = ({ title, description, image }) => {
   const [open, setOpen] = useState(false);
-  const [difficulty, setDifficulty] = useState('Normal');
-  const [gameMode, setGameMode] = useState('multiplayer');
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -22,10 +20,6 @@ const QuizCard = ({ title, description, image }) => {
         onClose={handleClose}
         title={title}
         description={description}
-        difficulty={difficulty}
-        onDifficultyChange={setDifficulty}
-        gameMode={gameMode}
-        onGameModeChange={setGameMode}
       />
     </>
   );

@@ -2,14 +2,15 @@ import { Router } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 
 const router = new Router();
 
-export default (leaderboardDb) => {
+export default (leaderboardDb, usersDb) => {
+
   // Add a new leaderboard entry
   router.post("/api/leaderboards", async (context) => {
     const body = await context.request.body().value;
 
-    const { playerId, score, rank, period } = body;
+    const { userId, topScore, rank, period } = body;
 
-    if (!playerId || !score || !rank || !period) {
+    if (!userId || !topScore || !rank || !period) {
       context.response.status = 400;
       context.response.body = { error: "All fields are required" };
       return;
@@ -18,8 +19,8 @@ export default (leaderboardDb) => {
     try {
       const leaderboardCollection = leaderboardDb.collection("leaderboard");
       const newEntry = {
-        playerId,
-        score,
+        userId,
+        topScore,
         rank,
         period,
         timestamp: new Date()
@@ -34,13 +35,13 @@ export default (leaderboardDb) => {
   });
 
   // Update an existing leaderboard entry
-  router.put("/api/leaderboards/:playerId", async (context) => {
-    const playerId = context.params.playerId;
+  router.put("/api/leaderboards/:userId", async (context) => {
+    const userId = context.params.userId;
     const body = await context.request.body().value;
 
-    const { score, rank, period } = body;
+    const { topScore, rank, period } = body;
 
-    if (!score || !rank || !period) {
+    if (!topScore || !rank || !period) {
       context.response.status = 400;
       context.response.body = { error: "All fields are required" };
       return;
@@ -49,13 +50,13 @@ export default (leaderboardDb) => {
     try {
       const leaderboardCollection = leaderboardDb.collection("leaderboard");
       const updatedEntry = {
-        score,
+        topScore,
         rank,
         period,
         timestamp: new Date()
       };
       const { matchedCount } = await leaderboardCollection.updateOne(
-        { playerId },
+        { userId },
         { $set: updatedEntry }
       );
 
@@ -72,23 +73,52 @@ export default (leaderboardDb) => {
     }
   });
 
-  // Fetch all players from a specific leaderboard theme and period
+  // Fetch all users from a specific leaderboard theme and period
   router.get("/api/leaderboards/:theme/:period", async (context) => {
     const theme = context.params.theme;
     const period = context.params.period;
 
     try {
-      const leaderboardCollection = leaderboardDb.collection(theme); // Ensure the collection name is correct
-      const players = await leaderboardCollection.find({ period }).toArray();
+      const leaderboardCollection = leaderboardDb.collection(theme); // Access the correct leaderboard collection
+      const users = await leaderboardCollection.find({ period }).toArray();
 
-      if (players.length === 0) {
+      if (users.length === 0) {
         context.response.status = 403;
-        context.response.body = { message: "No players found for the specified theme and period" };
+        context.response.body = { message: "No users found for the specified theme and period" };
         return;
       }
 
+      // Retrieve user details from Users DB based on user IDs in the leaderboard
+      const userIds = users.map(user => user.userId);
+      const usersCollections = ["UsersAC", "UsersDF", "UsersGI", "UsersJL", "UsersMZ"];
+      let userDetails = [];
+
+      for (const collectionName of usersCollections) {
+        const usersCollection = usersDb.collection(collectionName);
+        const details = await usersCollection.find({ _id: { $in: userIds } }).toArray();
+        if (details.length > 0) {
+          userDetails = details;
+          break;
+        }
+      }
+
+      // Sort users by topScore in descending order and calculate placement
+      users.sort((a, b) => b.topScore - a.topScore);
+      users.forEach((user, index) => {
+        user.placement = index + 1;
+      });
+
+      // Map leaderboard entries with user details
+      const leaderboardWithDetails = users.map(user => {
+        const userInfo = userDetails.find(detail => detail._id.toString() === user.userId.toString()) || null;
+        return {
+          ...user,
+          userInfo
+        };
+      });
+
       context.response.status = 200;
-      context.response.body = players;
+      context.response.body = leaderboardWithDetails;
     } catch (error) {
       context.response.status = 500;
       context.response.body = { error: "Internal Server Error" };
