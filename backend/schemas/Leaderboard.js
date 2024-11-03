@@ -1,4 +1,6 @@
-const LeaderboardSchema = {
+import { model, Schema } from "npm:mongoose@^8.7";
+
+const LeaderboardSchema = new Schema({
   playerId: {
     type: "objectId or string",
     required: true,
@@ -20,5 +22,9 @@ const LeaderboardSchema = {
     type: "string",
     enum: ['daily', 'monthly', 'allTime'],
     required: true,
-},
-};
+  }
+});
+
+const Leaderboard = model("Leaderboard", LeaderboardSchema);
+
+export { Leaderboard };

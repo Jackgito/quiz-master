@@ -4,8 +4,6 @@ import { Form, Button, Schema, Message, useToaster } from 'rsuite';
 const { StringType } = Schema.Types;
 
 const model = Schema.Model({
-  username: StringType().isRequired('Username is required').minLength(3, 'Username must be at least 3 characters long'),
-  password: StringType().isRequired('Password is required').minLength(6, 'Password must be at least 6 characters long'),
   confirmPassword: StringType()
     .addRule((value, data) => {
       if (value !== data.password) {
@@ -16,11 +14,10 @@ const model = Schema.Model({
     .isRequired('Confirm password is required')
 });
 
-const SignUpForm = ({ onSubmit }) => {
+const SignInForm = ({ onSubmit }) => {
   const [formValue, setFormValue] = useState({
     username: '',
     password: '',
-    confirmPassword: ''
   });
 
   const [formError, setFormError] = useState({});
@@ -52,8 +49,8 @@ const SignUpForm = ({ onSubmit }) => {
     };
     
     try {
-      // Make an API call to create a new user
-      const response = await fetch('http://localhost:8000/api/user/create', {
+      // Make an API call to authenticate a user
+      const response = await fetch('http://localhost:8000/api/user/authenticate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -64,7 +61,7 @@ const SignUpForm = ({ onSubmit }) => {
       const data = await response.json();
   
       if (response.ok) {
-        toaster.push(<Message type="success">Sign up successful!</Message>, { placement: 'topCenter' });
+        toaster.push(<Message type="success">Sign in successful!</Message>, { placement: 'topCenter' });
         sessionStorage.setItem('userId', data.userId);  // Store user ID in session storage
         onSubmit();  // Close the modal after successful submission
       } else {
@@ -101,13 +98,6 @@ const SignUpForm = ({ onSubmit }) => {
           {formError.password}
         </Form.ErrorMessage>}
       </Form.Group>
-      <Form.Group controlId="confirm-password-1">
-        <Form.ControlLabel>Confirm Password</Form.ControlLabel>
-        <Form.Control name="confirmPassword" type="password" />
-        {formError.confirmPassword && <Form.ErrorMessage show={true} placement="leftStart">
-          {formError.confirmPassword}
-        </Form.ErrorMessage>}
-      </Form.Group>
       <Form.Group>
           <Button appearance="primary" onClick={handleSubmit} loading={loading}>
             Sign Up
@@ -117,4 +107,4 @@ const SignUpForm = ({ onSubmit }) => {
   );
 }
 
-export default SignUpForm;
+export default SignInForm;

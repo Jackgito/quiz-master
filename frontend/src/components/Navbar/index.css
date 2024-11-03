@@ -38,6 +38,19 @@
   -webkit-text-fill-color: transparent;
 }
 
-.avatar {
-  margin-left: auto; /* Push the avatar to the right */
+.rs-avatar {
+  margin-top: 6px;
+}
+
+.rs-form-error-message {
+  background: transparent !important;
+  border: none !important;
+}
+
+span.rs-form-error-message-arrow::after {
+  display: none;
+}
+
+span {
+  font-size: 14px !important;
 }

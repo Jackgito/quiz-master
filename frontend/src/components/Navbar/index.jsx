@@ -1,12 +1,30 @@
-import React, { useState } from 'react';
-import { Navbar as RsNavbar, Nav, Avatar, Modal } from 'rsuite';
+import React, { useState, useEffect } from 'react';
+import { Navbar as RsNavbar, Nav, Avatar, Modal, toaster, Message, Dropdown } from 'rsuite';
 import SignUpForm from './signUpForm';
+import SignInForm from './signInForm';
 import './index.css';
 
-const Navbar = ({ active, onSelect, ...props }) => {
+const Navbar = (props) => {
+  const [active, setActive] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(true);
+
+  useEffect(() => {
+    // Check if userId is in session storage
+    const userId = sessionStorage.getItem('userId');
+    if (userId) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const handleSignInClick = () => {
+    setIsSignUp(false);
+    setShowModal(true);
+  };
+
+  const handleSignUpClick = () => {
+    setIsSignUp(true);
     setShowModal(true);
   };
 
@@ -15,8 +33,18 @@ const Navbar = ({ active, onSelect, ...props }) => {
   };
 
   const handleSubmit = () => {
-    // Handle form submission logic here
     setShowModal(false);
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('userId');
+    setIsLoggedIn(false);
+    toaster.push(<Message type="info">Logged out successfully</Message>, { placement: 'topCenter' });
+  };
+
+  const onSelect = (eventKey) => {
+    setActive(eventKey);
   };
 
   return (
@@ -28,19 +56,31 @@ const Navbar = ({ active, onSelect, ...props }) => {
           <Nav onSelect={onSelect} activeKey={active} className="nav">
             <Nav.Item href="/">Home</Nav.Item>
             <Nav.Item href="/leaderboard">Leaderboard</Nav.Item>
-            <Nav.Item onClick={handleSignInClick}>Sign up</Nav.Item>
+            <Dropdown
+              renderToggle={(props, ref) => (
+                <Avatar {...props} ref={ref} size="sm" className="avatar" />
+              )}
+            >
+              {isLoggedIn ? (
+                <Dropdown.Item onClick={handleLogout}>Log out</Dropdown.Item>
+              ) : (
+                <>
+                  <Dropdown.Item onClick={handleSignUpClick}>Sign up</Dropdown.Item>
+                  <Dropdown.Item onClick={handleSignInClick}>Sign in</Dropdown.Item>
+                </>
+              )}
+            </Dropdown>
           </Nav>
         </div>
 
-        <Avatar size="sm" className="avatar" />
       </RsNavbar>
 
       <Modal open={showModal} onClose={handleClose} size="xs" backdrop="static" centered>
         <Modal.Header>
-          <Modal.Title>Sign Up</Modal.Title>
+        <Modal.Title>{isSignUp ? 'Sign Up' : 'Sign In'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <SignUpForm onSubmit={handleSubmit} onCancel={handleClose} />
+          {isSignUp ? <SignUpForm onSubmit={handleSubmit} /> : <SignInForm onSubmit={handleSubmit} />}
         </Modal.Body>
       </Modal>
     </>
