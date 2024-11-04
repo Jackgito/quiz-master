@@ -1,4 +1,6 @@
 import { Router } from "https://deno.land/x/oak@v11.1.0/mod.ts";
+import mongoose from "npm:mongoose@^8.7";
+const { ObjectId } = mongoose.Types;
 import { User } from "../schemas/User.js";
 import * as bcrypt from "https://deno.land/x/bcrypt@v0.2.4/mod.ts";
 
@@ -66,7 +68,7 @@ export default (usersDb) => {
     }
   });
 
-  // Authenticate a user
+  // Authenticate a user (check if userId in session storage matches user in DB)
   router.post("/api/user/authenticate", async (context) => {
     try {
       const body = await context.request.body().value;
@@ -76,31 +78,91 @@ export default (usersDb) => {
       const collectionName = getCollectionName(username);
       const usersCollection = usersDb.collection(collectionName);
 
-      // Find the user in the database
+      // Find the user in the database and compare the hashed password
       const user = await usersCollection.findOne({ username });
-      if (!user) {
+      const passwordMatch = user && await bcrypt.compare(password, user.password);
+
+      if (!user || !passwordMatch) {
         context.response.status = 404;
-        context.response.body = { error: "User not found" };
+        context.response.body = { error: "Invalid username or password" };
         return;
       }
 
-      // Compare the hashed password
-      const passwordMatch = await bcrypt.compare(password, user.password);
-      if (!passwordMatch) {
-        context.response.status = 401;
-        context.response.body = { error: "Invalid password" };
-        return;
-      }
+      // Convert user._id to a string
+      const userId = user._id.toString(); 
 
       // Respond with success message and user ID
       context.response.status = 200;
-      context.response.body = { message: "Authentication successful", userId: user._id.$oid };
+      context.response.body = { message: "Authentication successful", userId: userId };
     } catch (error) {
       console.log(error);
       context.response.status = 500;
       context.response.body = { error: "Internal Server Error" };
     }
   });
+
+  // Get user details with achievements
+  router.get("/api/user/get/:userId", async (context) => {
+    try {
+      const userId = context.params.userId;
+      let objectId;
+      try {
+        objectId = new ObjectId(userId);
+      } catch (error) {
+        console.error("Invalid userId format:", userId);
+        context.response.status = 400;
+        context.response.body = { error: "Invalid user ID format" };
+        return;
+      }
+
+      // Define user collections to search
+      const userCollectionNames = ["UsersAC", "UsersDF", "UsersGI", "UsersJL", "UsersMZ"];
+      let user = null;
+
+      // Search for the user in all collections
+      for (const collectionName of userCollectionNames) {
+        user = await usersDb.collection(collectionName).findOne({ _id: objectId });
+        if (user) break;
+      }
+
+      if (!user) {
+        context.response.status = 404;
+        context.response.body = { error: "User not found" };
+        return;
+      }
+
+      // Remove _id and password from the user data
+      const { _id, password, achievements, ...userWithoutSensitiveInfo } = user;
+
+      // Fetch achievement details for each achievement ID
+      const achievementDetails = [];
+      if (achievements && achievements.length > 0) {
+        for (const achievement of achievements) {
+          const achievementData = await usersDb.collection("Achievements").findOne({ _id: achievement.achievementId });
+          if (achievementData) {
+            achievementDetails.push({
+              achievementId: achievement.achievementId,
+              name: achievementData.name,
+              icon: achievementData.icon,
+              dateEarned: achievement.dateEarned,
+            });
+          }
+        }
+      }
+
+      // Combine user data with achievements
+      context.response.status = 200;
+      context.response.body = {
+        ...userWithoutSensitiveInfo,
+        achievements: achievementDetails,
+      };
+    } catch (error) {
+      console.log("Error fetching user details:", error);
+      context.response.status = 500;
+      context.response.body = { error: "Internal server error" };
+    }
+  });
+
 
   return router;
 };

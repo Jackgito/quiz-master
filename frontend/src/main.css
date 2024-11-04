@@ -62,11 +62,9 @@ button {
   background-color: var(--accent-color);
   color: var(--text-color-dark);
 }
-/* button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-} */
 
-@media (prefers-color-scheme: light) {
 
+.rs-list-item {
+  background-color: var(--background-color);
+  color: var(--text-color);
 }

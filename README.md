@@ -82,7 +82,8 @@ Welcome to the project! This guide will help you get started and understand the 
   - **Pages/**: Contains each page of the application. Pages are rendered using `index.jsx`, which often imports other components for organization.
   - **Components/**: Reusable components used across the application. Page-specific components are located within their respective page folders.
   - **Data/**: Static files used to render specific components.
-  - **Assets/**: Stores images and other static assets.
+  - **Public/**: Stores images and other static assets.
+  - **Hooks/**: Contains custom hooks that are similar to functions. They are mainly used for API calls.
 
 #### Useful Commands
 

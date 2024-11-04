@@ -2,7 +2,7 @@ import { model, Schema } from "npm:mongoose@^8.7";
 
 const LeaderboardSchema = new Schema({
   playerId: {
-    type: "objectId or string",
+    type: "ObjectId",
     required: true,
     unique: true
   },

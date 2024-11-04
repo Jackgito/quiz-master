@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Navbar as RsNavbar, Nav, Avatar, Modal, toaster, Message, Dropdown } from 'rsuite';
+import { Navbar as RsNavbar, Nav, Avatar, Modal, toaster, Message } from 'rsuite';
 import SignUpForm from './signUpForm';
 import SignInForm from './signInForm';
+import ProfileModal from './profileModal';
 import './index.css';
 
 const Navbar = (props) => {
@@ -9,11 +10,12 @@ const Navbar = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSignUp, setIsSignUp] = useState(true);
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
   useEffect(() => {
     // Check if userId is in session storage
     const userId = sessionStorage.getItem('userId');
-    if (userId) {
+    if (userId != null) {
       setIsLoggedIn(true);
     }
   }, []);
@@ -47,6 +49,14 @@ const Navbar = (props) => {
     setActive(eventKey);
   };
 
+  const handleProfileClick = () => {
+    setShowProfileModal(true);
+  };
+
+  const handleProfileClose = () => {
+    setShowProfileModal(false);
+  };
+
   return (
     <>
       <RsNavbar className="sticky-navbar" {...props}>
@@ -56,33 +66,35 @@ const Navbar = (props) => {
           <Nav onSelect={onSelect} activeKey={active} className="nav">
             <Nav.Item href="/">Home</Nav.Item>
             <Nav.Item href="/leaderboard">Leaderboard</Nav.Item>
-            <Dropdown
-              renderToggle={(props, ref) => (
-                <Avatar {...props} ref={ref} size="sm" className="avatar" />
-              )}
+            <Nav.Menu
+              title={<Avatar size="sm" className="avatar" />}
             >
               {isLoggedIn ? (
-                <Dropdown.Item onClick={handleLogout}>Log out</Dropdown.Item>
+                <>
+                  <Nav.Item onClick={handleProfileClick}>Profile</Nav.Item>
+                  <Nav.Item onClick={handleLogout}>Log out</Nav.Item>
+                </>
               ) : (
                 <>
-                  <Dropdown.Item onClick={handleSignUpClick}>Sign up</Dropdown.Item>
-                  <Dropdown.Item onClick={handleSignInClick}>Sign in</Dropdown.Item>
+                  <Nav.Item onClick={handleSignUpClick}>Sign up</Nav.Item>
+                  <Nav.Item onClick={handleSignInClick}>Sign in</Nav.Item>
                 </>
               )}
-            </Dropdown>
+            </Nav.Menu>
           </Nav>
         </div>
-
       </RsNavbar>
 
-      <Modal open={showModal} onClose={handleClose} size="xs" backdrop="static" centered>
+      <Modal open={showModal} onClose={handleClose} size="xs" backdrop="static">
         <Modal.Header>
-        <Modal.Title>{isSignUp ? 'Sign Up' : 'Sign In'}</Modal.Title>
+          <Modal.Title>{isSignUp ? 'Sign Up' : 'Sign In'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {isSignUp ? <SignUpForm onSubmit={handleSubmit} /> : <SignInForm onSubmit={handleSubmit} />}
         </Modal.Body>
       </Modal>
+
+      <ProfileModal open={showProfileModal} onClose={handleProfileClose} />
     </>
   );
 };

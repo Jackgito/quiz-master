@@ -1,6 +1,6 @@
 // Import necessary modules for server (Oak) and database (MongoDB) management
 import { Application } from "https://deno.land/x/oak@v11.1.0/mod.ts";
-import { MongoClient } from "npm:mongodb@6.3.0";
+import { MongoClient } from "npm:mongodb@6.10.0";
 import "https://deno.land/x/dotenv/load.ts";
 
 // Import route handlers for achievements, players, and questions
