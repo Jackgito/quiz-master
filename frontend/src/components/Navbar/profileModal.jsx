@@ -1,27 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Avatar, List, Loader } from 'rsuite';
-import useFetchUser from '../../hooks/useFetchUser';
+import useFetchUserData from '../../hooks/useFetchUserData';
 
-const userModal = ({ open, onClose }) => {
+// Displays user's information, including username, total wins, total score, achievements, and themes.
+const ProfileModal = ({ open, onClose }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const fetchUserData = useFetchUserData();
+  const userId = sessionStorage.getItem('userId');
 
-  const id = sessionStorage.getItem('userId');
-  const { user, loading, error } = useFetchUser(id);
+  useEffect(() => {
+    const fetchUser = async () => {
+      setLoading(true); // Ensure loading state resets on each call
+      const result = await fetchUserData(userId);
+      if (result.success) {
+        setUser(result.data);
+      }
+      setLoading(false);
+    };
+
+    if (userId) fetchUser();
+  }, [userId]);
 
   let profilePicturePath = '/profilePictures/default.png';
   if (user) {
-    profilePicturePath =`/profilePictures/${user.profilePicture}` || '/profilePictures/default.png';
+    profilePicturePath = `/profilePictures/${user.profilePicture}` || '/profilePictures/default.png';
   }
 
   return (
     <Modal size="lg" open={open} onClose={onClose} backdrop={true}>
       <Modal.Header>
-        <Modal.Title>Player user</Modal.Title>
+        <Modal.Title>Player Profile</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {loading ? (
           <Loader center content="Loading..." />
         ) : user ? (
-          <div style={{margin: "10px"}}>
+          <div style={{ margin: '10px' }}>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
               <Avatar size="lg" src={profilePicturePath} />
               <div style={{ marginLeft: '20px' }}>
@@ -56,7 +71,7 @@ const userModal = ({ open, onClose }) => {
             </List>
           </div>
         ) : (
-          <List.Item>No themes available</List.Item>
+          <List.Item>No user data available</List.Item>
         )}
       </Modal.Body>
       <Modal.Footer>
@@ -68,4 +83,4 @@ const userModal = ({ open, onClose }) => {
   );
 };
 
-export default userModal;
+export default ProfileModal;

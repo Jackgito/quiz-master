@@ -32,6 +32,6 @@
 }
 
 .time-left-text {
-  font-size: 2.25rem;
+  font-size: 32px !important;
   font-weight: bold;
 }

@@ -1,4 +1,3 @@
-
 // Later this will display multiplayer scores with profile pictures
 const ScoreDisplay = ({ score, totalQuestions, onPlayAgain }) => {
 

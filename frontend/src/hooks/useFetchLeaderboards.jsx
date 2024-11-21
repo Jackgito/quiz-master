@@ -8,7 +8,7 @@ const useFetchLeaderboards = (theme, period) => {
   useEffect(() => {
     const fetchLeaderboards = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/leaderboards/${theme}/${period}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/leaderboards/${theme}/${period}`, {
           method: 'GET',
         });
         if (!response.ok) {

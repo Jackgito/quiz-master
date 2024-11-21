@@ -27,6 +27,38 @@ export default (usersDb) => {
     }
   }
 
+  function transformToObjectId(userId) {
+    try {
+      return new ObjectId(userId);
+    } catch (error) {
+      console.error("Invalid userId format:", userId);
+      throw new Error("Invalid user ID format");
+    }
+  }
+
+  // Returns the user document and collection name
+  async function findUserById(userId) {
+    const userCollectionNames = ["UsersAC", "UsersDF", "UsersGI", "UsersJL", "UsersMZ"];
+    let user = null;
+    let foundCollectionName = null;
+  
+    for (const collectionName of userCollectionNames) {
+      user = await usersDb.collection(collectionName).findOne({ _id: transformToObjectId(userId) });
+      if (user) {
+        foundCollectionName = collectionName;
+        break;
+      }
+    }
+  
+    if (!user) {
+      context.response.status = 404;
+      context.response.body = { error: "User not found" };
+      return;
+    }
+  
+    return { user, collectionName: foundCollectionName };
+  }
+
   // Create a new user
   router.post("/api/user/create", async (context) => {
     try {
@@ -62,7 +94,7 @@ export default (usersDb) => {
       context.response.status = 201;
       context.response.body = { message: "User created successfully", userId: result.$oid };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       context.response.status = 500;
       context.response.body = { error: "Internal Server Error" };
     }
@@ -95,7 +127,7 @@ export default (usersDb) => {
       context.response.status = 200;
       context.response.body = { message: "Authentication successful", userId: userId };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       context.response.status = 500;
       context.response.body = { error: "Internal Server Error" };
     }
@@ -104,32 +136,10 @@ export default (usersDb) => {
   // Get user details with achievements
   router.get("/api/user/get/:userId", async (context) => {
     try {
+      // Find the user in the database
       const userId = context.params.userId;
-      let objectId;
-      try {
-        objectId = new ObjectId(userId);
-      } catch (error) {
-        console.error("Invalid userId format:", userId);
-        context.response.status = 400;
-        context.response.body = { error: "Invalid user ID format" };
-        return;
-      }
-
-      // Define user collections to search
-      const userCollectionNames = ["UsersAC", "UsersDF", "UsersGI", "UsersJL", "UsersMZ"];
-      let user = null;
-
-      // Search for the user in all collections
-      for (const collectionName of userCollectionNames) {
-        user = await usersDb.collection(collectionName).findOne({ _id: objectId });
-        if (user) break;
-      }
-
-      if (!user) {
-        context.response.status = 404;
-        context.response.body = { error: "User not found" };
-        return;
-      }
+      let objectId = transformToObjectId(userId);
+      const { user, collectionName } = await findUserById(objectId);
 
       // Remove _id and password from the user data
       const { _id, password, achievements, ...userWithoutSensitiveInfo } = user;
@@ -157,12 +167,102 @@ export default (usersDb) => {
         achievements: achievementDetails,
       };
     } catch (error) {
-      console.log("Error fetching user details:", error);
+      console.error("Error fetching user details:", error);
       context.response.status = 500;
       context.response.body = { error: "Internal server error" };
     }
   });
 
+  // Update or add user score
+  router.post("/api/user/updateScore/:userId", async (context) => {
+    try {
+      // Find the user in the database
+      const userId = context.params.userId;
+      let objectId = transformToObjectId(userId);
+      const { user, collectionName } = await findUserById(objectId);
+
+      const body = await context.request.body().value;
+      const { theme, score } = body;
+      
+
+      // Validate request body
+      if (!theme || typeof score !== "number") {
+        context.response.status = 400;
+        context.response.body = { error: "Invalid request body. Provide 'theme' and 'score'." };
+        return;
+      }
+
+      // Check if the theme exists
+      let themeIndex = user.themes.findIndex((t) => t.theme === theme);
+      const updatedThemes = [...user.themes];
+
+      if (themeIndex === -1) {
+        // Add new theme if not found
+        updatedThemes.push({
+          theme: theme,
+          rank: "novice",
+          currentScore: score,
+        });
+      } else {
+        // Increment theme score
+        updatedThemes[themeIndex].currentScore += score;
+
+        // Update rank based on new currentScore
+        const newRank = determineRank(updatedThemes[themeIndex].currentScore);
+        updatedThemes[themeIndex].rank = newRank;
+      }
+
+      // Update totalScore
+      const newTotalScore = user.totalScore + score;
+
+      // Update the user document in the database
+      const usersCollection = usersDb.collection(collectionName);
+      const result = await usersCollection.updateOne(
+        { _id: objectId },
+        {
+          $set: {
+            totalScore: newTotalScore,
+            themes: updatedThemes,
+          },
+        }
+      );
+
+      if (result.modifiedCount === 0) {
+        context.response.status = 500;
+        context.response.body = { error: "Failed to update user scores." };
+        return;
+      }
+
+      // Respond with success
+      context.response.status = 200;
+      context.response.body = {
+        message: "Score updated successfully",
+        userId,
+        updatedTotalScore: newTotalScore,
+        updatedTheme: updatedThemes.find((t) => t.theme === theme),
+      };
+    } catch (error) {
+      console.error(error);
+      context.response.status = 500;
+      context.response.body = { error: "Internal Server Error" };
+    }
+  });
+
+  // Utility function to determine rank based on score (rank names need to be changed)
+  function determineRank(score) {
+    switch (true) {
+      case (score >= 1000):
+        return "Expert";
+      case (score >= 750):
+        return "Advanced";
+      case (score >= 500):
+        return "Intermediate";
+      case (score >= 250):
+        return "Scholar";
+      default:
+        return "Novice";
+    }
+  }
 
   return router;
 };

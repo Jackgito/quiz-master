@@ -15,21 +15,21 @@ export default function QuestionTimer({
   const strokeDashoffset = circumference - (timeLeft / initialTime) * circumference;
 
   useEffect(() => {
+    if (timeLeft === 0 && onTimeUp) {
+      onTimeUp(); // Notify parent only after rendering completes
+    }
+    if (timeLeft > 0 && onTimeChange) {
+      onTimeChange(timeLeft); // Notify parent only after rendering completes
+    }
+  }, [timeLeft, onTimeUp, onTimeChange]);
+
+  useEffect(() => {
     const interval = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime > 0) {
-          const newTime = prevTime - 1;
-          if (onTimeChange) onTimeChange(newTime); // Call onTimeChange with new time
-          return newTime;
-        }
-        clearInterval(interval);
-        if (onTimeUp) onTimeUp();  // Call onTimeUp when timer reaches 0
-        return 0;
-      });
+      setTimeLeft((prevTime) => Math.max(prevTime - 1, 0));
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [onTimeUp, onTimeChange]);
+  }, []);
 
   const getColor = (progress) => {
     if (progress >= 1) {

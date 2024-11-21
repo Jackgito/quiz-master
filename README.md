@@ -66,7 +66,6 @@ Welcome to the project! This guide will help you get started and understand the 
      cd frontend
      deno run dev
      ```
-
 ---
 
 ### Frontend
@@ -79,11 +78,15 @@ Welcome to the project! This guide will help you get started and understand the 
 
 - **frontend/**: Contains all client-side code, including:
   - **index.html** and **main.jsx**: Entry points to the application, responsible for selecting which page to display.
-  - **Pages/**: Contains each page of the application. Pages are rendered using `index.jsx`, which often imports other components for organization.
-  - **Components/**: Reusable components used across the application. Page-specific components are located within their respective page folders.
-  - **Data/**: Static files used to render specific components.
-  - **Public/**: Stores images and other static assets.
-  - **Hooks/**: Contains custom hooks that are similar to functions. They are mainly used for API calls.
+  - **pages/**: Contains each page of the application. Pages are rendered using `index.jsx`, which often imports other components for organization.
+  - **components/**: Reusable components used across the application. Page-specific components are located within their respective page folders.
+  - **data/**: Static files used to render specific components.
+  - **public/**: Stores images and other static assets.
+  - **hooks/**: Contains custom hooks that are similar to functions. They are mainly used for API calls.
+  - **context/**: When multiple components need to access properties like game settings, context should be used so they can be easily accessed from anywhere to avoid deeply nested properties
+   - **main.css/**: This file contains the global style rules across the application. Many of the components also have specific CSS rules that only affect them, and should be used if you want to make changes only to that component.
+
+  Folder's first letter should be capitalized if it is used for component. Otherwise it should be small.
 
 #### Useful Commands
 
@@ -96,6 +99,10 @@ Welcome to the project! This guide will help you get started and understand the 
 
 - **Vite Documentation**: [https://vitejs.dev/guide/](https://vitejs.dev/guide/)
 - **RSuite Documentation**: [https://rsuitejs.com/](https://rsuitejs.com/)
+
+#### Known issues
+- Authentication uses session storage for now, which should be changed to more secure method later
+- If a player leaves a quiz, their score won't be updated
 
 ---
 

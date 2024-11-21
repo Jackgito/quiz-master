@@ -1,11 +1,29 @@
 import { RadioGroup, Radio } from 'rsuite';
+import { useQuizSettings } from '../../../context/quizSettingsContext';
 
-const GameModeSelector = ({ onChange }) => (
-  <RadioGroup name="gameMode" inline appearance="picker" defaultValue="singleplayer" onChange={onChange}>
-    <Radio value="singleplayer">Singleplayer</Radio>
-    <Radio value="multiplayer" disabled>Multiplayer</Radio>
-    <Radio value="private" disabled>Private</Radio>
-  </RadioGroup>
-);
+const GamemodeSelector = () => {
+  const { settings, setSettings } = useQuizSettings();
 
-export default GameModeSelector;
+  const handleGamemodeChange = (value) => {
+    setSettings((prevSettings) => ({
+      ...prevSettings,
+      gamemode: value,
+    }));
+  };
+
+  return (
+    <RadioGroup
+      name="gamemode"
+      inline
+      appearance="picker"
+      defaultValue={settings.gamemode}
+      onChange={handleGamemodeChange}
+    >
+      <Radio value="singleplayer">Singleplayer</Radio>
+      <Radio value="multiplayer" disabled>Multiplayer</Radio>
+      <Radio value="private" disabled>Private</Radio>
+    </RadioGroup>
+  );
+};
+
+export default GamemodeSelector;

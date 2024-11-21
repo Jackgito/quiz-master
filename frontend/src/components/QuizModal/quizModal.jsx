@@ -1,20 +1,34 @@
 import { Modal, Button } from 'rsuite';
 import { useNavigate } from 'react-router-dom';
-import { useQuizSettings } from '../../context/quizSettingsContext';
 import DifficultySelector from '../../pages/home/QuizCard/difficultySelector';
-import GameModeSelector from '../../pages/home/QuizCard/gameModeSelector';
+import GamemodeSelector from '../../pages/home/QuizCard/gamemodeSelector';
+import { useQuizSettings } from '../../context/quizSettingsContext';
+
 import './quizModal.css';
-import { useState } from 'react';
+import { useEffect } from 'react';
 
 const QuizModal = ({ open, onClose, title, description }) => {
+
+  const { setSettings } = useQuizSettings();
+
+  // Update theme in settings context when the modal is opened
+  useEffect(() => {
+    if (open) {
+      setSettings((prevSettings) => ({
+        ...prevSettings,
+        theme: title,
+      }));
+    }
+  }, [title, setSettings, open]);
+
   const navigate = useNavigate();
-  const { settings, setSettings } = useQuizSettings();
-  const [difficulty, setDifficulty] = useState(settings.difficulty || 'Normal');
-  const [gameMode, setGameMode] = useState(settings.gamemode || 'Multiplayer');
 
   const handleStartQuiz = () => {
-    setSettings({ theme: title, difficulty, gamemode: gameMode }); // This saves quiz settings to the context, so it can be accessed by the quiz page
-    navigate('/quiz');
+    if (location.pathname === '/quiz') {
+      window.location.reload(); // Reload the page with new settings if already on quiz page
+    } else {
+      navigate('/quiz');
+    }
   };
 
   return (
@@ -25,8 +39,8 @@ const QuizModal = ({ open, onClose, title, description }) => {
       <Modal.Body>
         <p>{description}</p>
         <div className="selector-container">
-          <DifficultySelector difficulty={difficulty} onChange={setDifficulty} />
-          <GameModeSelector gameMode={gameMode} onChange={setGameMode} />
+          <DifficultySelector/>
+          <GamemodeSelector/>
           <Button onClick={handleStartQuiz} appearance="primary">
             Start Quiz
           </Button>
