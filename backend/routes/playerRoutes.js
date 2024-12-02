@@ -92,7 +92,7 @@ export default (usersDb) => {
 
       // Respond with success message and user ID
       context.response.status = 201;
-      context.response.body = { message: "User created successfully", userId: result.$oid };
+      context.response.body = { message: "User created successfully", userId: result.insertedId.toString() };
     } catch (error) {
       console.error(error);
       context.response.status = 500;
@@ -192,6 +192,8 @@ export default (usersDb) => {
         return;
       }
 
+      user.themes = user.themes || [];
+
       // Check if the theme exists
       let themeIndex = user.themes.findIndex((t) => t.theme === theme);
       const updatedThemes = [...user.themes];
@@ -243,6 +245,41 @@ export default (usersDb) => {
       };
     } catch (error) {
       console.error(error);
+      context.response.status = 500;
+      context.response.body = { error: "Internal Server Error" };
+    }
+  });
+
+  // Delete a user by ID
+  router.delete("/api/user/delete/:userId", async (context) => {
+    try {
+      const userId = context.params.userId;
+      const objectId = transformToObjectId(userId);
+
+      // Find the user and the collection they belong to
+      const { user, collectionName } = await findUserById(objectId);
+
+      if (!user) {
+        context.response.status = 404;
+        context.response.body = { error: "User not found" };
+        return;
+      }
+
+      // Delete the user from the database
+      const usersCollection = usersDb.collection(collectionName);
+      const result = await usersCollection.deleteOne({ _id: objectId });
+
+      if (result.deletedCount === 0) {
+        context.response.status = 500;
+        context.response.body = { error: "Failed to delete user." };
+        return;
+      }
+
+      // Respond with success
+      context.response.status = 200;
+      context.response.body = { message: "User deleted successfully", userId };
+    } catch (error) {
+      console.error("Error deleting user:", error);
       context.response.status = 500;
       context.response.body = { error: "Internal Server Error" };
     }

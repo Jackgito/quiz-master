@@ -55,16 +55,32 @@ button {
 }
 
 .rs-radio-checked :is(*) {
-  color: var(--accent-color) !important;
+  color: var(--primary-color) !important;
 }
 
 .rs-btn-primary {
-  background-color: var(--accent-color);
+  background-color: var(--primary-color);
   color: var(--text-color-dark);
+  transition: background-color 0.5s ease, color 0.5s ease !important; /* Smooth transition */
+  transition: color 0.3s ease;
 }
 
+.rs-btn-primary:hover {
+  background-color: var(--accent-color);
+  color: var(--text-color);
+}
 
 .rs-list-item {
   background-color: var(--background-color);
   color: var(--text-color);
+}
+
+.redBtn {
+  background-color: var(--incorrect-color);
+  color: var(--text-color-dark);
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+.redBtn:hover {
+  background-color: red;
 }

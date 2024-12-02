@@ -4,6 +4,13 @@ const UserSchema = new Schema ({
   username: { type: "string", required: true, unique: true },
   email: { type: "string", required: true, unique: true },
   password: { type: "string", required: true }, // Hashed password for security
+  createdAt: { type: "date", default: () => new Date() }, // Creation timestamp
+  profilePicture: { type: "string", default: "default.png" }, // File path to user's profile picture
+  totalScore: { type: "number", default: 0 }, // Total score across all themes
+  totalWins: { type: "number", default: 0 }, // Total number of wins across all themes
+  themes: { type: "array", default: [] }, // Array of user's themes
+  achievements: { type: "array", default: [] }, // Array of user's achievements
+  
   // themes: {
   //   type: "array",
   //   items: {
@@ -25,7 +32,6 @@ const UserSchema = new Schema ({
   //     },
   //   },
   // },
-  createdAt: { type: "date", default: () => new Date() }, // Creation timestamp
 });
 
 const User = model("User", UserSchema);

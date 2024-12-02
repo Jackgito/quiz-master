@@ -10,8 +10,9 @@ const useFetchQuestions = (theme, difficulty) => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
+        const questionAmount = 3;
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/questions?theme=${theme}&difficulty=${difficulty}&limit=1`
+          `${import.meta.env.VITE_API_URL}/api/questions?theme=${theme}&difficulty=${difficulty}&limit=${questionAmount}`
         );
         const data = await response.json();
         setQuestions(data);

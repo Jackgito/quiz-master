@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Avatar, List, Loader } from 'rsuite';
 import useFetchUserData from '../../hooks/useFetchUserData';
+import useDeleteUser from '../../hooks/useDeleteUser';
 
 // Displays user's information, including username, total wins, total score, achievements, and themes.
 const ProfileModal = ({ open, onClose }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const fetchUserData = useFetchUserData();
+  const deleteUser = useDeleteUser();
+
   const userId = sessionStorage.getItem('userId');
 
   useEffect(() => {
@@ -21,6 +25,18 @@ const ProfileModal = ({ open, onClose }) => {
 
     if (userId) fetchUser();
   }, [userId]);
+
+  const handleDeleteUser = async () => {
+    const confirmed = window.confirm("Are you sure you want to delete this user?");
+    if (confirmed) {
+      const result = await deleteUser(userId);
+      if (result.success) {
+        onClose();
+        sessionStorage.removeItem("userId");
+        window.location.reload();
+      }
+    }
+  };
 
   let profilePicturePath = '/profilePictures/default.png';
   if (user) {
@@ -75,8 +91,8 @@ const ProfileModal = ({ open, onClose }) => {
         )}
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onClose} appearance="subtle">
-          Close
+        <Button onClick={handleDeleteUser} appearance="primary" className='redBtn'>
+          Delete User
         </Button>
       </Modal.Footer>
     </Modal>

@@ -6,11 +6,10 @@ import LeaderboardsSection from './LeaderboardsSection';
 import './index.css'; 
 
 function Home() {
-  const [activeTab, setActiveTab] = useState('leaderboards'); 
 
   return (
     <>
-      <Navbar active={activeTab} onSelect={setActiveTab} />
+      <Navbar active={"leaderBoards"}/>
       <LeaderboardsSection />
     </>
   );

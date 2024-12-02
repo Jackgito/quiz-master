@@ -7,11 +7,10 @@ import HeroSection from "./heroSection";
 import './index.css'; 
 
 function Home() {
-  const [activeTab, setActiveTab] = useState('home'); 
 
   return (
     <>
-      <Navbar active={activeTab} onSelect={setActiveTab} />
+      <Navbar active={"home"}/>
       <HeroSection />
       <QuizSelectionSection />
     </>

@@ -65,6 +65,7 @@ const SignUpForm = ({ onSubmit }) => {
   
       if (response.ok) {
         toaster.push(<Message type="success">Sign up successful!</Message>, { placement: 'topCenter' });
+        console.log(data);
         sessionStorage.setItem('userId', data.userId);  // Store user ID in session storage
         onSubmit();  // Close the modal after successful submission
       } else {

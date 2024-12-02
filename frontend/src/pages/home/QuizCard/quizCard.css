@@ -13,7 +13,7 @@
 }
 
 .rs-panel-bordered:hover {
-  border-color: var(--accent-color);
-  box-shadow: 0 0 10px var(--accent-color);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 10px var(--primary-color);
   transform: scale(1.05);
 }
