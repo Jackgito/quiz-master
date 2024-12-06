@@ -83,8 +83,8 @@ export default (leaderboardDb, usersDb) => {
       const users = await leaderboardCollection.find({ period }).toArray();
 
       if (users.length === 0) {
-        context.response.status = 403;
-        context.response.body = { message: "No users found for the specified theme and period" };
+        context.response.status = 200;
+        context.response.body = [];
         return;
       }
 
