@@ -25,10 +25,11 @@ const useAuthenticateUser = () => {
       }
 
       const responseData = await response.json();
-      const { message, userId } = responseData;
+      const { message, userId, userProfilePicturePath } = responseData;
 
       // Store user ID in session storage
       sessionStorage.setItem("userId", userId);
+      sessionStorage.setItem("userProfilePicturePath", userProfilePicturePath);
 
       // Show success toaster
       toaster.push(

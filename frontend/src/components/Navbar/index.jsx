@@ -40,6 +40,7 @@ const Navbar = (activeTab) => {
 
   const handleLogout = () => {
     sessionStorage.removeItem("userId");
+    sessionStorage.removeItem("userProfilePicturePath");
     setIsLoggedIn(false);
     toaster.push(<Message type="info">Logged out successfully</Message>, { placement: "topCenter" });
   };
@@ -51,7 +52,8 @@ const Navbar = (activeTab) => {
   const handleProfileClose = () => {
     setShowProfileModal(false);
   };
-
+  const userProfilePicturePath =  sessionStorage.getItem("userProfilePicturePath");
+  const profilePicturePath = `/profilePictures/${userProfilePicturePath}`;
   return (
     <>
       <RsNavbar className="sticky-navbar">
@@ -71,7 +73,7 @@ const Navbar = (activeTab) => {
             <Nav.Item eventKey="leaderboard" href="/leaderboard">
               Leaderboard
             </Nav.Item>
-            <Nav.Menu title={<Avatar size="sm" className="avatar" />}>
+            <Nav.Menu title={<Avatar size="sm" className="avatar" src={profilePicturePath}/>}>
               {isLoggedIn ? (
                 <>
                   <Nav.Item eventKey="profile" onClick={handleProfileClick}>

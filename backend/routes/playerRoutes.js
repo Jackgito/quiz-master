@@ -121,11 +121,12 @@ export default (usersDb) => {
       }
 
       // Convert user._id to a string
-      const userId = user._id.toString(); 
+      const userId = user._id.toString();
+      const userProfilePicturePath = user.profilePicture;
 
       // Respond with success message and user ID
       context.response.status = 200;
-      context.response.body = { message: "Authentication successful", userId: userId };
+      context.response.body = { message: "Authentication successful", userId: userId, userProfilePicturePath: userProfilePicturePath };
     } catch (error) {
       console.error(error);
       context.response.status = 500;
@@ -143,7 +144,6 @@ export default (usersDb) => {
 
       // Remove _id and password from the user data
       const { _id, password, achievements, ...userWithoutSensitiveInfo } = user;
-
       // Fetch achievement details for each achievement ID
       const achievementDetails = [];
       if (achievements && achievements.length > 0) {
@@ -159,13 +159,13 @@ export default (usersDb) => {
           }
         }
       }
-
       // Combine user data with achievements
       context.response.status = 200;
       context.response.body = {
         ...userWithoutSensitiveInfo,
         achievements: achievementDetails,
       };
+
     } catch (error) {
       console.error("Error fetching user details:", error);
       context.response.status = 500;
@@ -250,6 +250,71 @@ export default (usersDb) => {
     }
   });
 
+  // Update user profile
+router.post("/api/user/updateProfile/:userId", async (context) => {
+  try {
+    // Extract userId from the route parameters
+    const userId = context.params.userId;
+    const objectId = transformToObjectId(userId);
+
+    // Retrieve the user from the database
+    const { user, collectionName } = await findUserById(objectId);
+
+    if (!user) {
+      context.response.status = 404;
+      context.response.body = { error: "User not found." };
+      return;
+    }
+
+    // Parse the request body
+    const body = await context.request.body().value;
+    const { profilePicture, ...otherUpdates } = body;
+
+    // Validate the request body
+    if (!profilePicture && Object.keys(otherUpdates).length === 0) {
+      context.response.status = 400;
+      context.response.body = { error: "Invalid request body. Provide data to update." };
+      return;
+    }
+
+    // Update fields in the user document
+    const updates = {};
+
+    if (profilePicture) {
+      updates.profilePicture = profilePicture;
+    }
+
+    // Add any other updates to the user profile
+    Object.keys(otherUpdates).forEach((key) => {
+      updates[key] = otherUpdates[key];
+    });
+
+    // Update the user document in the database
+    const usersCollection = usersDb.collection(collectionName);
+    const result = await usersCollection.updateOne(
+      { _id: objectId },
+      { $set: updates }
+    );
+
+    if (result.modifiedCount === 0) {
+      context.response.status = 500;
+      context.response.body = { error: "Failed to update user profile." };
+      return;
+    }
+
+    // Respond with success
+    context.response.status = 200;
+    context.response.body = {
+      message: "Profile updated successfully",
+      userId,
+      updatedFields: updates,
+    };
+  } catch (error) {
+    console.error(error);
+    context.response.status = 500;
+    context.response.body = { error: "Internal Server Error" };
+  }
+});
   // Delete a user by ID
   router.delete("/api/user/delete/:userId", async (context) => {
     try {
