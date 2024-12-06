@@ -121,11 +121,12 @@ export default (usersDb) => {
       }
 
       // Convert user._id to a string
-      const userId = user._id.toString(); 
+      const userId = user._id.toString();
+      const userProfilePicturePath = user.profilePicture;
 
       // Respond with success message and user ID
       context.response.status = 200;
-      context.response.body = { message: "Authentication successful", userId: userId };
+      context.response.body = { message: "Authentication successful", userId: userId, userProfilePicturePath: userProfilePicturePath };
     } catch (error) {
       console.error(error);
       context.response.status = 500;

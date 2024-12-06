@@ -37,6 +37,7 @@ const ProfileModal = ({ open, onClose }) => {
       if (result.success) {
         onClose();
         sessionStorage.removeItem("userId");
+        sessionStorage.removeItem("userProfilePicturePath");
         window.location.reload();
       }
     }
@@ -48,6 +49,7 @@ const ProfileModal = ({ open, onClose }) => {
     const result = await updateUserProfile(userId, { profilePicture: selectedPicture });
     if (result.success) {
       setUser((prevUser) => ({ ...prevUser, profilePicture: selectedPicture }));
+      sessionStorage.setItem('userProfilePicturePath', selectedPicture);
       setEditingPicture(false);
     }
   };
