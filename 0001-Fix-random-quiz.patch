@@ -1,0 +1,64 @@
+From dd4c699dd545012cf01f8c3eca297f12df81e78c Mon Sep 17 00:00:00 2001
+From: mikaelahallenberg <mikaelahallenberg@gmail.com>
+Date: Wed, 11 Dec 2024 22:25:15 +0100
+Subject: [PATCH] Fix random quiz
+
+Random quiz was empty page. This commit chooses random theme from themes and creates quiz.
+---
+ backend/routes/questionRoutes.js | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/backend/routes/questionRoutes.js b/backend/routes/questionRoutes.js
+index 2318bc3..7352a13 100644
+--- a/backend/routes/questionRoutes.js
++++ b/backend/routes/questionRoutes.js
+@@ -2,12 +2,28 @@ import { Router } from "https://deno.land/x/oak@v11.1.0/mod.ts";
+ 
+ const router = new Router();
+ 
++const THEMES = ["Sports", "Science", "Geography", "Gaming", "Music", "Random"];
++
++const getRandomTheme = () => {
++  const themes = THEMES.filter((t) => t !== "Random");
++  // Sort themes randomly and pick the first entry.
++  // Math.random() returns a number between 0 and 1,
++  // so offsetting it by -0.5 results in a number between -0.5 and 0.5.
++  return themes.sort(() => Math.random() - 0.5)[0];
++};
++
+ export default (questionsDb) => {
+   router.get("/api/questions", async (context) => {
+     const theme = context.request.url.searchParams.get("theme");
+     const difficulty = context.request.url.searchParams.get("difficulty");
+     const limitParam = context.request.url.searchParams.get("limit");
+ 
++    if (!THEMES.includes(theme)) {
++      context.response.status = 400;
++      context.response.body = { error: "Invalid theme" };
++      return;
++    }
++
+     // Convert limit to an integer or set a default value
+     const limit = limitParam ? parseInt(limitParam, 10) : 10; // default to 10 if limit is not provided
+     if (isNaN(limit) || limit <= 0) {
+@@ -23,12 +39,15 @@ export default (questionsDb) => {
+     }
+ 
+     try {
++      const selectedTheme = theme === "Random" ? getRandomTheme() : theme;
++
+       // Select collection based on theme
+-      const questionsCollection = questionsDb.collection(theme);
++      const questionsCollection = questionsDb.collection(selectedTheme);
+       const questions = await questionsCollection
+-        .find({ theme, difficulty })
++        .find({ theme: selectedTheme, difficulty })
+         .limit(limit)
+         .toArray();
++
+       context.response.body = questions;
+     } catch (error) {
+       context.response.status = 500;
+-- 
+2.43.0
+
