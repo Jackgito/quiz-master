@@ -70,7 +70,7 @@ const Quiz = () => {
   if (questionsError) return <div>Error loading questions: {questionsError.message}</div>;
 
   // Results screen
-  if (gameEnded) {
+  if (gameEnded || questions.length === 0) {
     return (
       <EndingScreen
         score={score}

@@ -138,9 +138,10 @@ export default (usersDb) => {
       const { _id, password, achievements, ...userWithoutSensitiveInfo } = user;
       // Fetch achievement details for each achievement ID
       const achievementDetails = [];
+      console.log(achievements);
       if (achievements && achievements.length > 0) {
         for (const achievement of achievements) {
-          const achievementData = await usersDb.collection("Achievements").findOne({ _id: achievement.achievementId });
+          const achievementData = await usersDb.collection("Achievements").findOne({ _id: transformToObjectId(achievement.achievementId) });
           if (achievementData) {
             achievementDetails.push({
               achievementId: achievement.achievementId,
@@ -242,7 +243,7 @@ export default (usersDb) => {
     }
   });
 
-  // Update user profile
+// Update user profile
 router.post("/api/user/updateProfile/:userId", async (context) => {
   try {
     // Extract userId from the route parameters

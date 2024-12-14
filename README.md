@@ -103,8 +103,9 @@ Welcome to the project! This guide will help you get started and understand the 
 #### Known issues
 - Authentication uses session storage for now, which should be changed to more secure method later
 - If a player leaves a quiz, their score won't be updated
-- Random quiz is not working
 - Sometimes clicking an answer doesn't register
+- Achievements can't be earned yet
+- Some difficulties don't have any questions yet
 
 ---
 

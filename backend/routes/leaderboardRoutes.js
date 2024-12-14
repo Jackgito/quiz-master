@@ -109,8 +109,6 @@ export default (leaderboardDb, usersDb) => {
         }
       }
 
-console.log("Final User Details:", userDetails);
-
       // Sort users by score in descending order and calculate placement
       users.sort((a, b) => b.score - a.score);
       users.forEach((user, index) => {
