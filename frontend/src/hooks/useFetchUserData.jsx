@@ -10,6 +10,7 @@ const useFetchUserData = () => {
         throw new Error(`Error fetching user: ${response.statusText}`);
       }
       const data = await response.json();
+      sessionStorage.setItem("username", JSON.stringify(data.username)); // Store username in session storage for easier access
       return { success: true, data };
     } catch (err) {
       console.error(err);

@@ -13,13 +13,7 @@ import createLeaderboardRoutes from "./routes/leaderboardRoutes.js";
 import { oakCors } from "https://deno.land/x/cors/mod.ts";
 
 // Set up environment variables for MongoDB URI and database names
-const MONGO_URI = Deno.env.get("MONGO_URI") || "mongodb://localhost:27017";
-
-// Check for MONGO_URI, exit if not set
-if (!MONGO_URI) {
-  console.error("MONGO_URI is not set");
-  Deno.exit(1);
-}
+const MONGO_URI = Deno.env.get("MONGO_URI");
 
 const MONGO_DB_NAME_USERS = Deno.env.get("MONGO_DB_NAME_USERS");
 const MONGO_DB_NAME_QUESTIONS = Deno.env.get("MONGO_DB_NAME_QUESTIONS");

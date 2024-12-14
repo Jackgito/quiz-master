@@ -1,72 +1,54 @@
 import { Router } from "https://deno.land/x/oak@v11.1.0/mod.ts";
+import { calculateRank } from "../utils/calculateRank.js";
+import { transformToObjectId } from "../utils/transformToObjectId.js";
 
 const router = new Router();
 
 export default (leaderboardDb, usersDb) => {
 
-  // Add a new leaderboard entry
-  router.post("/api/leaderboards", async (context) => {
+  // Add or update a leaderboard entry
+  router.post("/api/leaderboards/update/:userId", async (context) => {
     const body = await context.request.body().value;
-
-    const { userId, topScore, rank, period } = body;
-
-    if (!userId || !topScore || !rank || !period) {
+  
+    const { userId, score, theme } = body;
+  
+    if (!userId || !score || !theme) {
       context.response.status = 400;
       context.response.body = { error: "All fields are required" };
       return;
     }
-
+  
     try {
-      const leaderboardCollection = leaderboardDb.collection("leaderboard");
-      const newEntry = {
+      const leaderboardCollection = leaderboardDb.collection(theme);
+      const existingEntry = await leaderboardCollection.findOne({ userId });
+  
+      const entryData = {
         userId,
-        topScore,
-        rank,
-        period,
+        score,
+        rank: calculateRank(score),
         timestamp: new Date()
       };
-      await leaderboardCollection.insertOne(newEntry);
-      context.response.status = 201;
-      context.response.body = { message: "Leaderboard entry added successfully" };
-    } catch (error) {
-      context.response.status = 500;
-      context.response.body = { error: "Internal Server Error" };
-    }
-  });
-
-  // Update an existing leaderboard entry
-  router.put("/api/leaderboards/:userId", async (context) => {
-    const userId = context.params.userId;
-    const body = await context.request.body().value;
-
-    const { topScore, rank, period } = body;
-
-    if (!topScore || !rank || !period) {
-      context.response.status = 400;
-      context.response.body = { error: "All fields are required" };
-      return;
-    }
-
-    try {
-      const leaderboardCollection = leaderboardDb.collection("leaderboard");
-      const updatedEntry = {
-        topScore,
-        rank,
-        period,
-        timestamp: new Date()
-      };
-      const { matchedCount } = await leaderboardCollection.updateOne(
-        { userId },
-        { $set: updatedEntry }
-      );
-
-      if (matchedCount === 0) {
-        context.response.status = 404;
-        context.response.body = { error: "Leaderboard entry not found" };
-        return;
+  
+      if (existingEntry) {
+        // Update existing entry
+        const { matchedCount } = await leaderboardCollection.updateOne(
+          { userId },
+          { $set: entryData }
+        );
+  
+        if (matchedCount === 0) {
+          context.response.status = 404;
+          context.response.body = { error: "Leaderboard entry not found" };
+          return;
+        }
+  
+        context.response.body = { message: "Leaderboard entry updated successfully" };
+      } else {
+        // Create new entry
+        await leaderboardCollection.insertOne(entryData);
+        context.response.status = 201;
+        context.response.body = { message: "Leaderboard entry added successfully" };
       }
-
-      context.response.body = { message: "Leaderboard entry updated successfully" };
     } catch (error) {
       context.response.status = 500;
       context.response.body = { error: "Internal Server Error" };
@@ -78,13 +60,34 @@ export default (leaderboardDb, usersDb) => {
     const theme = context.params.theme;
     const period = context.params.period;
 
+    let startDate, endDate;
+    const now = new Date();
+
+    if (period === "daily") {
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    } else if (period === "monthly") {
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      endDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    } else if (period === "allTime") {
+      startDate = new Date(0);
+      endDate = now;
+    } else {
+      context.response.status = 400;
+      context.response.body = { error: "Invalid period" };
+      return;
+    }
+
     try {
       const leaderboardCollection = leaderboardDb.collection(theme); // Access the correct leaderboard collection
-      const users = await leaderboardCollection.find({ period }).toArray();
+      const users = await leaderboardCollection.find({
+        timestamp: { $gte: startDate, $lt: endDate }
+      }).toArray();
 
       if (users.length === 0) {
-        context.response.status = 403;
-        context.response.body = { message: "No users found for the specified theme and period" };
+        context.response.status = 200;
+        console.log("No users found");
+        context.response.body = [];
         return;
       }
 
@@ -95,20 +98,26 @@ export default (leaderboardDb, usersDb) => {
 
       for (const collectionName of usersCollections) {
         const usersCollection = usersDb.collection(collectionName);
-        const details = await usersCollection.find({ _id: { $in: userIds } }).toArray();
+
+        console.log(`Querying collection: ${collectionName} with IDs:`, userIds);
+
+        const details = await usersCollection.find({ _id: { $in: userIds.map(id => transformToObjectId(id)) } }).toArray();
+
         if (details.length > 0) {
-          userDetails = details;
-          break;
+          userDetails = userDetails.concat(details);
+          console.log("User details found in collection:", collectionName);
         }
       }
 
-      // Sort users by topScore in descending order and calculate placement
-      users.sort((a, b) => b.topScore - a.topScore);
+console.log("Final User Details:", userDetails);
+
+      // Sort users by score in descending order and calculate placement
+      users.sort((a, b) => b.score - a.score);
       users.forEach((user, index) => {
         user.placement = index + 1;
       });
 
-      // Map leaderboard entries with user details
+      // Map leaderboard entries with user info, like username
       const leaderboardWithDetails = users.map(user => {
         const userInfo = userDetails.find(detail => detail._id.toString() === user.userId.toString()) || null;
         return {
@@ -120,6 +129,7 @@ export default (leaderboardDb, usersDb) => {
       context.response.status = 200;
       context.response.body = leaderboardWithDetails;
     } catch (error) {
+      console.error("Error retrieving user details:", error);
       context.response.status = 500;
       context.response.body = { error: "Internal Server Error" };
     }

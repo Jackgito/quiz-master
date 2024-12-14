@@ -17,11 +17,6 @@ const LeaderboardSchema = new Schema({
   timestamp: {
     type: "date",
     default: () => new Date()
-  },
-  period: {
-    type: "string",
-    enum: ['daily', 'monthly', 'allTime'],
-    required: true,
   }
 });
 

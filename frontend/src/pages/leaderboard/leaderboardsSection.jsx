@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { SelectPicker } from 'rsuite';
 import useFetchLeaderboards from '../../hooks/useFetchLeaderboards';
-import quizCategories from '../../data/quizCategories.json'; // Import the JSON data
+import quizCategories from '../../data/quizCategories.json';
 
+// Displays player scores in a table for selected theme and period
 const LeaderboardsSection = () => {
   const [period, setPeriod] = useState("allTime");
   const [theme, setTheme] = useState("Science");
@@ -21,6 +22,8 @@ const LeaderboardsSection = () => {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error loading leaderboards</p>;
+
+  const currentUsername = JSON.parse(sessionStorage.getItem('username'));
 
   return (
     <div className="leaderboards-section">
@@ -43,24 +46,32 @@ const LeaderboardsSection = () => {
           searchable={false}
         />
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Placement</th>
-            <th>Username</th>
-            <th>Score</th>
-          </tr>
-        </thead>
-        <tbody>
-          {leaderboards.map((entry, index) => (
-            <tr key={index}>
-              <td>{entry.placement}</td>
-              <td>{entry.userInfo.username}</td>
-              <td>{entry.topScore}</td>
+      
+      {leaderboards.length === 0 ? (
+        <p>No scores found</p>
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th>Placement</th>
+              <th>Username</th>
+              <th>Score</th>
+              <th>Rank</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {leaderboards.map((entry, index) => (
+              // Change row color if the entry belongs to the current user:
+              <tr key={index} className={entry.userInfo.username === currentUsername ? 'highlight-current-user' : ''}>
+                <td>{entry.placement}</td>
+                <td>{entry.userInfo.username}</td>
+                <td>{entry.score}</td>
+                <td>{entry.rank}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

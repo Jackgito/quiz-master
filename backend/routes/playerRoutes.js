@@ -1,8 +1,9 @@
 import { Router } from "https://deno.land/x/oak@v11.1.0/mod.ts";
-import mongoose from "npm:mongoose@^8.7";
-const { ObjectId } = mongoose.Types;
+
 import { User } from "../schemas/User.js";
 import * as bcrypt from "https://deno.land/x/bcrypt@v0.2.4/mod.ts";
+import { calculateRank } from "../utils/calculateRank.js";
+import { transformToObjectId } from "../utils/transformToObjectId.js";
 
 const router = new Router();
 
@@ -24,15 +25,6 @@ export default (usersDb) => {
       return "UsersMZ";
     } else {
       throw new Error("Invalid username character range");
-    }
-  }
-
-  function transformToObjectId(userId) {
-    try {
-      return new ObjectId(userId);
-    } catch (error) {
-      console.error("Invalid userId format:", userId);
-      throw new Error("Invalid user ID format");
     }
   }
 
@@ -210,7 +202,7 @@ export default (usersDb) => {
         updatedThemes[themeIndex].currentScore += score;
 
         // Update rank based on new currentScore
-        const newRank = determineRank(updatedThemes[themeIndex].currentScore);
+        const newRank = calculateRank(updatedThemes[themeIndex].currentScore);
         updatedThemes[themeIndex].rank = newRank;
       }
 
@@ -349,22 +341,6 @@ router.post("/api/user/updateProfile/:userId", async (context) => {
       context.response.body = { error: "Internal Server Error" };
     }
   });
-
-  // Utility function to determine rank based on score (rank names need to be changed)
-  function determineRank(score) {
-    switch (true) {
-      case (score >= 1000):
-        return "Expert";
-      case (score >= 750):
-        return "Advanced";
-      case (score >= 500):
-        return "Intermediate";
-      case (score >= 250):
-        return "Scholar";
-      default:
-        return "Novice";
-    }
-  }
 
   return router;
 };

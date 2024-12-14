@@ -2,11 +2,20 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 80vh;
+  justify-content: top;
+  height: 100%;
   width: 100%;
   color: #ffffff;
   text-align: center;
   padding-top: 250px;
   padding-bottom: 150px;
+}
+
+table th, table td {
+  padding: 4px 8px; /* Adjust to your preference */
+  font-size: 1rem;
+}
+
+.highlight-current-user {
+  color: var(--accent-color);
 }

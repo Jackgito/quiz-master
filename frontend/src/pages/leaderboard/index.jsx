@@ -1,7 +1,5 @@
-import { useState } from "react"; 
-
 import Navbar from '../../components/Navbar';
-import LeaderboardsSection from './LeaderboardsSection';
+import LeaderboardsSection from './leaderboardsSection';
 
 import './index.css'; 
 

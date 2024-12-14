@@ -1,10 +1,12 @@
 import { useToaster, Notification } from "rsuite";
 
+// Updates player score in the player and leaderboards databases
 const useUpdatePlayerScore = () => {
   const toaster = useToaster();
 
   const updatePlayerScore = async (userId, theme, score) => {
     try {
+      // Update player score
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/updateScore/${userId}`, {
         method: "POST",
         headers: {
@@ -19,6 +21,20 @@ const useUpdatePlayerScore = () => {
       }
 
       const responseData = await response.json();
+
+      // Update leaderboard
+      const leaderboardResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/leaderboards/update/${userId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, theme, score }),
+      });
+
+      if (!leaderboardResponse.ok) {
+        const errorData = await leaderboardResponse.json();
+        throw new Error(errorData.error || "Failed to update leaderboard");
+      }
 
       // Show success toaster
       toaster.push(

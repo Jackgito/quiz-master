@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuizSettings } from '../../context/quizSettingsContext';
 import useFetchQuestions from "../../hooks/useFetchQuestions";
-import useUpdatePlayerScore from "../../hooks/useUpdatePlayerScore.jsx"; // Custom hook with toasters
+import useUpdatePlayerScore from "../../hooks/useUpdatePlayerScore.jsx";
 import QuestionCard from "./QuestionCard/questionCard.jsx";
 import QuestionTimer from "./QuestionTimer/questionTimer.jsx";
 import ScoreDisplay from "./ScoreDisplay/scoreDisplay.jsx";
@@ -14,7 +14,7 @@ const Quiz = () => {
 
   const { questions, loading: questionsLoading, error: questionsError } = useFetchQuestions(theme, difficulty, gamemode);
 
-  const updatePlayerScore = useUpdatePlayerScore(); // Initialize the hook
+  const updatePlayerScore = useUpdatePlayerScore();
 
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -55,7 +55,7 @@ const Quiz = () => {
     }
   }, [userAnswer]);
 
-  // Update player score in the database when the game ends
+  // Update player score to leaderboards and player database when game ends
   useEffect(() => {
     if (gameEnded) {
       const userId = sessionStorage.getItem("userId");
